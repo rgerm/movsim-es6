@@ -14,37 +14,28 @@ Build
 
 Install dependencies
 --------------------
+```shell
 npm install
-
-
-one time build
--------------
-gulp 6to5
-
+```
 
 start webserver
 ---------------
+```shell
 gulp server
+```
 
 -> localhost:8080
 
 
+one time build
+-------------
+```shell
+gulp 6to5
+```
+
+
 watch files for changes -> trigger build
 ----------------------------------------
+```shell
 gulp watch
-
-
-
-Atom Text Editor
-================
-
-Install Refactoring
--------------------
-
-Open Preference -> Install
-
-Search for refactor -> install
-  - refactor
-  - js-refactor
-
-Now you can refactor with ctrl-alt r
+```

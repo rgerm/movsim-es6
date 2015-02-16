@@ -1,13 +1,11 @@
-import Car from './car';
-import Idm from './idm';
+import RoadNetwork from './roadNetwork';
+import RoadSegment from './raodSegment';
 
 
-var longModelOptions = {
-	a: 1.5,
-	b: 1
-};
+let roadNetwork = new RoadNetwork();
 
-var longModel = new Idm(longModelOptions);
+let roadSegment1 = new RoadSegment(1);
+let roadSegment2 = new RoadSegment(3);
 
-var firstCar = new Car(longModel);
-var secondCar = new Car(longModel);
+roadNetwork.addRoadSegment(roadSegment1);
+roadNetwork.addRoadSegment(roadSegment2);
