@@ -9,7 +9,7 @@ var RoadSegment = _interopRequire(require("./raodSegment"));
 
 var raf = _interopRequire(require("./raf"));
 
-// raf();
+raf();
 
 var dt = 0.2;
 var simulationTime = 0;
