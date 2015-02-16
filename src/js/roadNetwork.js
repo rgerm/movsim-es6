@@ -14,7 +14,7 @@ export default class RoadNetwork {
 	timeStep(dt) {
 
 		this.roadSegments.forEach(function(roadSegmet) {
-			roadSegmet.makeLaneChanges(dt);
+			roadSegmet.considerLaneChanges(dt);
 		});
 
 		this.roadSegments.forEach(function(roadSegmet) {
