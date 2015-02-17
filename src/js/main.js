@@ -1,5 +1,9 @@
+import {
+	createRingRoad
+}
+from './roadNetworkFactory';
 import RoadNetwork from './roadNetwork';
-import RoadSegment from './raodSegment';
+import RoadSegment from './roadSegment';
 import raf from './raf';
 
 raf();
@@ -12,48 +16,52 @@ let running = false;
 let time;
 let timeWarp = 4;
 
-let roadNetwork = new RoadNetwork();
+// let roadNetwork = new RoadNetwork();
+//
+// let roadSegment1 = new RoadSegment(1);
+// let roadSegment2 = new RoadSegment(3);
+//
+// roadNetwork.addRoadSegment(roadSegment1);
+// roadNetwork.addRoadSegment(roadSegment2);
 
-let roadSegment1 = new RoadSegment(1);
-let roadSegment2 = new RoadSegment(3);
+let roadLength = 1000;
+let numberOfLanes = 1;
+let roadNetwork = createRingRoad(roadLength, numberOfLanes);
 
-roadNetwork.addRoadSegment(roadSegment1);
-roadNetwork.addRoadSegment(roadSegment2);
-
-
+debugger;
 start();
 
 function start() {
-  running = true;
-  time = new Date().getTime();
-  mainLoop();
+	running = true;
+	time = new Date().getTime();
+	mainLoop();
 }
 
 function mainLoop() {
-  if (running) {
+	if (running) {
 
-    requestAnimationFrame(mainLoop);
+		requestAnimationFrame(mainLoop);
 
-    var now = new Date().getTime();
-    dt = (now - (time || now)) / 1000;
-    dt *= timeWarp;
-    time = now;
+		var now = new Date().getTime();
+		dt = (now - (time || now)) / 1000;
+		dt *= timeWarp;
+		time = now;
 
-    // update state
-    simulationTime += dt;
-    iterationCount++;
-    roadNetwork.timeStep(dt);
+		// update state
+		simulationTime += dt;
+		iterationCount++;
+		roadNetwork.timeStep(dt);
 
-    // draw
+		// draw
 
-    // limit iterations for now
-    if (iterationCount >= 5) {
-      running = false;
-    }
+		// limit iterations for now
+		if (iterationCount >= 5) {
+			running = false;
+		}
 
-  } else {
-    console.log('timeStep: ', dt, ' -- simTime: ', simulationTime,
-      ' -- iterationcount: ', iterationCount);
-  }
+	} else {
+		console.log('timeStep: ', dt, ' -- simTime: ', simulationTime,
+			' -- iterationcount: ', iterationCount);
+	}
 
 }

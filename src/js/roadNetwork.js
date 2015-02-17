@@ -1,6 +1,5 @@
 export default class RoadNetwork {
 
-
 	constructor() {
 		this.roadSegments = [];
 		console.log('contructor RoadNetwork')
@@ -12,7 +11,6 @@ export default class RoadNetwork {
 	}
 
 	timeStep(dt) {
-
 		this.roadSegments.forEach(function(roadSegmet) {
 			roadSegmet.considerLaneChanges(dt);
 		});
@@ -37,6 +35,6 @@ export default class RoadNetwork {
 		this.roadSegments.forEach(function(roadSegmet) {
 			roadSegmet.updateInflow(dt);
 		});
-
 	}
+
 }
