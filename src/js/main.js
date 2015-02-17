@@ -6,6 +6,7 @@ import RoadNetwork from './roadNetwork';
 import RoadSegment from './roadSegment';
 import raf from './raf';
 
+// polyfill requestAnimationFrame
 raf();
 
 let dt = 0.2;
@@ -16,13 +17,6 @@ let running = false;
 let time;
 let timeWarp = 4;
 
-// let roadNetwork = new RoadNetwork();
-//
-// let roadSegment1 = new RoadSegment(1);
-// let roadSegment2 = new RoadSegment(3);
-//
-// roadNetwork.addRoadSegment(roadSegment1);
-// roadNetwork.addRoadSegment(roadSegment2);
 
 let roadLength = 1000;
 let numberOfLanes = 1;

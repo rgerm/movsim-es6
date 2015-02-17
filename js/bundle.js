@@ -1,7 +1,9 @@
 (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({"./src/js/main.js":[function(require,module,exports){
 "use strict";
 
-var _interopRequire = function (obj) { return obj && obj.__esModule ? obj["default"] : obj; };
+var _interopRequire = function (obj) {
+	return obj && obj.__esModule ? obj["default"] : obj;
+};
 
 var createRingRoad = require("./roadNetworkFactory").createRingRoad;
 var RoadNetwork = _interopRequire(require("./roadNetwork"));
@@ -10,6 +12,7 @@ var RoadSegment = _interopRequire(require("./roadSegment"));
 
 var raf = _interopRequire(require("./raf"));
 
+// polyfill requestAnimationFrame
 raf();
 
 var dt = 0.2;
@@ -20,13 +23,6 @@ var running = false;
 var time = undefined;
 var timeWarp = 4;
 
-// let roadNetwork = new RoadNetwork();
-//
-// let roadSegment1 = new RoadSegment(1);
-// let roadSegment2 = new RoadSegment(3);
-//
-// roadNetwork.addRoadSegment(roadSegment1);
-// roadNetwork.addRoadSegment(roadSegment2);
 
 var roadLength = 1000;
 var numberOfLanes = 1;
@@ -66,7 +62,76 @@ function mainLoop() {
 	}
 }
 
-},{"./raf":"/Users/ralphgerm/js/movsim-es6/src/js/raf.js","./roadNetwork":"/Users/ralphgerm/js/movsim-es6/src/js/roadNetwork.js","./roadNetworkFactory":"/Users/ralphgerm/js/movsim-es6/src/js/roadNetworkFactory.js","./roadSegment":"/Users/ralphgerm/js/movsim-es6/src/js/roadSegment.js"}],"/Users/ralphgerm/js/movsim-es6/src/js/raf.js":[function(require,module,exports){
+
+
+
+
+
+},{"./raf":"/Users/ralphgerm/js/movsim-es6/src/js/raf.js","./roadNetwork":"/Users/ralphgerm/js/movsim-es6/src/js/roadNetwork.js","./roadNetworkFactory":"/Users/ralphgerm/js/movsim-es6/src/js/roadNetworkFactory.js","./roadSegment":"/Users/ralphgerm/js/movsim-es6/src/js/roadSegment.js"}],"/Users/ralphgerm/js/movsim-es6/src/js/idm.js":[function(require,module,exports){
+"use strict";
+
+var _prototypeProperties = function (child, staticProps, instanceProps) {
+  if (staticProps) Object.defineProperties(child, staticProps);if (instanceProps) Object.defineProperties(child.prototype, instanceProps);
+};
+
+var _classCallCheck = function (instance, Constructor) {
+  if (!(instance instanceof Constructor)) {
+    throw new TypeError("Cannot call a class as a function");
+  }
+};
+
+var IdmParameters = (function () {
+  function IdmParameters() {
+    var v0 = arguments[0] === undefined ? 20 : arguments[0];
+    var a = arguments[1] === undefined ? 1.2 : arguments[1];
+    var b = arguments[2] === undefined ? 1.2 : arguments[2];
+    var T = arguments[3] === undefined ? 1.5 : arguments[3];
+    var s0 = arguments[4] === undefined ? 2 : arguments[4];
+    var s1 = arguments[5] === undefined ? 0 : arguments[5];
+    var delta = arguments[6] === undefined ? 4 : arguments[6];
+    _classCallCheck(this, IdmParameters);
+
+    this.v0 = v0;
+    this.a = a;
+    this.b = b;
+    this.T = T;
+    this.s0 = s0;
+    this.s1 = s1;
+    this.delta = delta;
+  }
+
+  _prototypeProperties(IdmParameters, {
+    getDefaultCar: {
+      value: function getDefaultCar() {
+        return new IdmParameters();
+      },
+      writable: true,
+      configurable: true
+    },
+    getDefaultTruck: {
+      value: function getDefaultTruck() {
+        var defaultTruck = new IdmParameters();
+        defaultTruck.v0 = 0.8 * defaultTruck.v0;
+        defaultTruck.a = 0.8 * defaultTruck.a;
+        defaultTruck.T = 1.2 * defaultTruck.T;
+        return defaultTruck;
+      },
+      writable: true,
+      configurable: true
+    }
+  });
+
+  return IdmParameters;
+})();
+
+module.exports = IdmParameters;
+
+
+
+
+
+
+},{}],"/Users/ralphgerm/js/movsim-es6/src/js/raf.js":[function(require,module,exports){
 "use strict";
 
 // http://paulirish.com/2011/requestanimationframe-for-smart-animating/
@@ -408,26 +473,43 @@ Object.defineProperty(exports, "__esModule", {
 },{"./roadNetwork":"/Users/ralphgerm/js/movsim-es6/src/js/roadNetwork.js","./roadSegment":"/Users/ralphgerm/js/movsim-es6/src/js/roadSegment.js"}],"/Users/ralphgerm/js/movsim-es6/src/js/roadSegment.js":[function(require,module,exports){
 "use strict";
 
-var _interopRequire = function (obj) { return obj && obj.__esModule ? obj["default"] : obj; };
+var _interopRequire = function (obj) {
+	return obj && obj.__esModule ? obj["default"] : obj;
+};
 
-var _prototypeProperties = function (child, staticProps, instanceProps) { if (staticProps) Object.defineProperties(child, staticProps); if (instanceProps) Object.defineProperties(child.prototype, instanceProps); };
+var _prototypeProperties = function (child, staticProps, instanceProps) {
+	if (staticProps) Object.defineProperties(child, staticProps);if (instanceProps) Object.defineProperties(child.prototype, instanceProps);
+};
 
-var _classCallCheck = function (instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } };
+var _classCallCheck = function (instance, Constructor) {
+	if (!(instance instanceof Constructor)) {
+		throw new TypeError("Cannot call a class as a function");
+	}
+};
 
 var RoadLane = _interopRequire(require("./roadLane"));
+
+var Vehicle = _interopRequire(require("./vehicle"));
+
+var IdmParameters = _interopRequire(require("./idm"));
 
 var RoadSegment = (function () {
 	function RoadSegment(options) {
 		_classCallCheck(this, RoadSegment);
 
 		this.roadLanes = [];
-		debugger;
-		for (var i = 0; i <= options.numberOfLanes; i++) {
+
+		for (var i = 1; i <= options.numberOfLanes; i++) {
 			var roadLane = new RoadLane(this);
 			this.roadLanes.push(roadLane);
 		}
 
+		var vehiclesInOneLane = options.roadLength * options.initDensityPerLane;
+		var numberOfVehicles = Math.floor(options.numberOfLanes * vehiclesInOneLane);
+		this._initializeVehicles(numberOfVehicles, options.initTruckFraction);
+
 		console.log("constructor RoadSegment");
+		debugger;
 	}
 
 	_prototypeProperties(RoadSegment, {
@@ -504,6 +586,22 @@ var RoadSegment = (function () {
 			},
 			writable: true,
 			configurable: true
+		},
+		_initializeVehicles: {
+			value: function _initializeVehicles(numberOfVehicles, truckFraction) {
+				for (var i = 0; i < numberOfVehicles; i++) {
+					var vehicleParameters = Vehicle.getDefaultParameters();
+					vehicleParameters.isTruck = Math.random() < truckFraction;
+					// initialize all vehicles with same speed determined by slower trucks
+					vehicleParameters.speed = 0.8 * IdmParameters.getDefaultTruck().v0;
+					vehicleParameters.position = i * 100; // TODO init correctly
+					var vehicle = new Vehicle(vehicleParameters);
+					var lane = i % this.roadLanes.length;
+					this.roadLanes[lane].addVehicle(vehicle);
+				}
+			},
+			writable: true,
+			configurable: true
 		}
 	});
 
@@ -512,7 +610,52 @@ var RoadSegment = (function () {
 
 module.exports = RoadSegment;
 
-},{"./roadLane":"/Users/ralphgerm/js/movsim-es6/src/js/roadLane.js"}]},{},["./src/js/main.js"])
+
+
+
+
+
+},{"./idm":"/Users/ralphgerm/js/movsim-es6/src/js/idm.js","./roadLane":"/Users/ralphgerm/js/movsim-es6/src/js/roadLane.js","./vehicle":"/Users/ralphgerm/js/movsim-es6/src/js/vehicle.js"}],"/Users/ralphgerm/js/movsim-es6/src/js/vehicle.js":[function(require,module,exports){
+"use strict";
+
+var _prototypeProperties = function (child, staticProps, instanceProps) { if (staticProps) Object.defineProperties(child, staticProps); if (instanceProps) Object.defineProperties(child.prototype, instanceProps); };
+
+var _classCallCheck = function (instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } };
+
+var numberOfCreatedVehicles = 0;
+
+var Vehicle = (function () {
+	function Vehicle(vehicleParameters) {
+		_classCallCheck(this, Vehicle);
+
+		this.vehicleParameters = vehicleParameters;
+		console.log("contructed vehicle with: ", vehicleParameters);
+	}
+
+	_prototypeProperties(Vehicle, {
+		getDefaultParameters: {
+			value: function getDefaultParameters() {
+				var isTruck = arguments[0] === undefined ? false : arguments[0];
+				var vehicleParameters = {};
+				vehicleParameters.isTruck = isTruck;
+				vehicleParameters.length = isTruck ? 15 : 7;
+				vehicleParameters.width = isTruck ? 3 : 2.5;
+				vehicleParameters.position = 0;
+				vehicleParameters.speed = 0;
+				vehicleParameters.acc = 0;
+				return vehicleParameters;
+			},
+			writable: true,
+			configurable: true
+		}
+	});
+
+	return Vehicle;
+})();
+
+module.exports = Vehicle;
+
+},{}]},{},["./src/js/main.js"])
 
 
 //# sourceMappingURL=bundle.js.map
