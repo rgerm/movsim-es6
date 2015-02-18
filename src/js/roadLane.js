@@ -150,7 +150,7 @@ export default class RoadLane {
     return this.vehicles[vehicleIndex + 1];
   };
 
-  getPositionInArray(id) {
+  _getPositionInArray(id) {
     // TODO es6 -> findIndex
     var index = this.vehicles.map(function(el) {
       return el.id;

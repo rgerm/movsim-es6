@@ -1,9 +1,7 @@
 (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({"./src/js/main.js":[function(require,module,exports){
 "use strict";
 
-var _interopRequire = function (obj) {
-	return obj && obj.__esModule ? obj["default"] : obj;
-};
+var _interopRequire = function (obj) { return obj && obj.__esModule ? obj["default"] : obj; };
 
 var createRingRoad = require("./roadNetworkFactory").createRingRoad;
 var RoadNetwork = _interopRequire(require("./roadNetwork"));
@@ -15,6 +13,7 @@ var raf = _interopRequire(require("./raf"));
 // polyfill requestAnimationFrame
 raf();
 
+// dt is dynamically changed. See mainLoop.
 var dt = 0.2;
 var simulationTime = 0;
 var iterationCount = 0;
@@ -54,31 +53,33 @@ function mainLoop() {
 		// draw
 
 		// limit iterations for now
-		if (iterationCount >= 5) {
+		if (iterationCount >= 1000) {
 			running = false;
+
+			roadNetwork.roadSegments[0].roadLanes[0].vehicles.forEach(function (vehicle) {
+				console.log("vehicle: ", vehicle.id, "  pos: ", vehicle.position.toFixed(2), "  speed: ", vehicle.speed.toFixed(2), "  acc: ", vehicle.acc.toFixed(4), "   a: ", vehicle.carFollowingModelParameters.a);
+			});
 		}
+
+		if (iterationCount % 100 === 0) {
+			console.log("timeStep: ", dt, " -- simTime: ", simulationTime, " -- iterationcount: ", iterationCount);
+
+			roadNetwork.roadSegments[0].roadLanes[0].vehicles.forEach(function (vehicle) {
+				console.log("vehicle: ", vehicle.id, "  pos: ", vehicle.position.toFixed(2), "  speed: ", vehicle.speed.toFixed(2), "  acc: ", vehicle.acc.toFixed(4), "   a: ", vehicle.carFollowingModelParameters.a);
+			});
+		}
+
 	} else {
 		console.log("timeStep: ", dt, " -- simTime: ", simulationTime, " -- iterationcount: ", iterationCount);
 	}
 }
 
-
-
-
-
-
 },{"./raf":"/Users/ralphgerm/js/movsim-es6/src/js/raf.js","./roadNetwork":"/Users/ralphgerm/js/movsim-es6/src/js/roadNetwork.js","./roadNetworkFactory":"/Users/ralphgerm/js/movsim-es6/src/js/roadNetworkFactory.js","./roadSegment":"/Users/ralphgerm/js/movsim-es6/src/js/roadSegment.js"}],"/Users/ralphgerm/js/movsim-es6/src/js/idm.js":[function(require,module,exports){
 "use strict";
 
-var _prototypeProperties = function (child, staticProps, instanceProps) {
-  if (staticProps) Object.defineProperties(child, staticProps);if (instanceProps) Object.defineProperties(child.prototype, instanceProps);
-};
+var _prototypeProperties = function (child, staticProps, instanceProps) { if (staticProps) Object.defineProperties(child, staticProps); if (instanceProps) Object.defineProperties(child.prototype, instanceProps); };
 
-var _classCallCheck = function (instance, Constructor) {
-  if (!(instance instanceof Constructor)) {
-    throw new TypeError("Cannot call a class as a function");
-  }
-};
+var _classCallCheck = function (instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } };
 
 var IdmParameters = (function () {
   function IdmParameters() {
@@ -126,12 +127,58 @@ var IdmParameters = (function () {
 
 module.exports = IdmParameters;
 
+},{}],"/Users/ralphgerm/js/movsim-es6/src/js/models.js":[function(require,module,exports){
+"use strict";
+
+var _interopRequire = function (obj) { return obj && obj.__esModule ? obj["default"] : obj; };
+
+var _prototypeProperties = function (child, staticProps, instanceProps) { if (staticProps) Object.defineProperties(child, staticProps); if (instanceProps) Object.defineProperties(child.prototype, instanceProps); };
+
+var _classCallCheck = function (instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } };
+
+var IdmParameters = _interopRequire(require("./idm"));
 
 
 
 
+var maxDeceleration = 20;
 
-},{}],"/Users/ralphgerm/js/movsim-es6/src/js/raf.js":[function(require,module,exports){
+var Models = (function () {
+	function Models() {
+		_classCallCheck(this, Models);
+	}
+
+	_prototypeProperties(Models, {
+		idmCalcAcc: {
+			value: function idmCalcAcc(s, v, vl, v0eff, parameters) {
+				var accFree = parameters.a * (1 - Math.pow(v / v0eff, parameters.delta));
+				var sstar = parameters.s0 + v * parameters.T + parameters.s1 * Math.sqrt((v + 0.0001) / v0eff) + 0.5 * v * (v - vl) / Math.sqrt(parameters.a * parameters.b);
+				var accInt = -parameters.a * Math.pow(sstar / Math.max(s, parameters.s0), 2);
+				return Math.max(-maxDeceleration, accFree + accInt);
+			},
+			writable: true,
+			configurable: true
+		},
+		calculateAcceleration: {
+			value: function calculateAcceleration(s, v, vl, v0eff, parameters) {
+				// TODO check effective speed of instanceof call
+				if (parameters instanceof IdmParameters) {
+					return Models.idmCalcAcc(s, v, vl, v0eff, parameters);
+				} else {
+					throw Error("cannot map parameters to acceleration function" + parameters.toString());
+				}
+			},
+			writable: true,
+			configurable: true
+		}
+	});
+
+	return Models;
+})();
+
+module.exports = Models;
+
+},{"./idm":"/Users/ralphgerm/js/movsim-es6/src/js/idm.js"}],"/Users/ralphgerm/js/movsim-es6/src/js/raf.js":[function(require,module,exports){
 "use strict";
 
 // http://paulirish.com/2011/requestanimationframe-for-smart-animating/
@@ -358,8 +405,8 @@ var RoadLane = (function () {
       writable: true,
       configurable: true
     },
-    getPositionInArray: {
-      value: function getPositionInArray(id) {
+    _getPositionInArray: {
+      value: function _getPositionInArray(id) {
         // TODO es6 -> findIndex
         var index = this.vehicles.map(function (el) {
           return el.id;
@@ -473,19 +520,11 @@ Object.defineProperty(exports, "__esModule", {
 },{"./roadNetwork":"/Users/ralphgerm/js/movsim-es6/src/js/roadNetwork.js","./roadSegment":"/Users/ralphgerm/js/movsim-es6/src/js/roadSegment.js"}],"/Users/ralphgerm/js/movsim-es6/src/js/roadSegment.js":[function(require,module,exports){
 "use strict";
 
-var _interopRequire = function (obj) {
-	return obj && obj.__esModule ? obj["default"] : obj;
-};
+var _interopRequire = function (obj) { return obj && obj.__esModule ? obj["default"] : obj; };
 
-var _prototypeProperties = function (child, staticProps, instanceProps) {
-	if (staticProps) Object.defineProperties(child, staticProps);if (instanceProps) Object.defineProperties(child.prototype, instanceProps);
-};
+var _prototypeProperties = function (child, staticProps, instanceProps) { if (staticProps) Object.defineProperties(child, staticProps); if (instanceProps) Object.defineProperties(child.prototype, instanceProps); };
 
-var _classCallCheck = function (instance, Constructor) {
-	if (!(instance instanceof Constructor)) {
-		throw new TypeError("Cannot call a class as a function");
-	}
-};
+var _classCallCheck = function (instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } };
 
 var RoadLane = _interopRequire(require("./roadLane"));
 
@@ -497,15 +536,17 @@ var RoadSegment = (function () {
 	function RoadSegment(options) {
 		_classCallCheck(this, RoadSegment);
 
+		this.parameters = options;
 		this.roadLanes = [];
+		this.numberOfLanes = options.numberOfLanes;
 
-		for (var i = 1; i <= options.numberOfLanes; i++) {
+		for (var i = 1; i <= this.numberOfLanes; i++) {
 			var roadLane = new RoadLane(this);
 			this.roadLanes.push(roadLane);
 		}
 
 		var vehiclesInOneLane = options.roadLength * options.initDensityPerLane;
-		var numberOfVehicles = Math.floor(options.numberOfLanes * vehiclesInOneLane);
+		var numberOfVehicles = Math.floor(this.numberOfLanes * vehiclesInOneLane);
 		this._initializeVehicles(numberOfVehicles, options.initTruckFraction);
 
 		console.log("constructor RoadSegment");
@@ -533,16 +574,13 @@ var RoadSegment = (function () {
 		}
 	}, {
 		considerLaneChanges: {
-			value: function considerLaneChanges(dt) {
-				console.log("no lane changes");
-			},
+			value: function considerLaneChanges(dt) {},
 			writable: true,
 			configurable: true
 		},
 		updateVehicleAccelerations: {
 			value: function updateVehicleAccelerations(dt) {
-				console.log("updateVehicleAccelerations with dt: ", dt);
-				for (var i = 0; i < lanes; i++) {
+				for (var i = 0; i < this.numberOfLanes; i++) {
 					this.roadLanes[i].updateVehicleAccelerations(dt);
 				}
 			},
@@ -551,26 +589,21 @@ var RoadSegment = (function () {
 		},
 		updateVehiclePositionsAndSpeeds: {
 			value: function updateVehiclePositionsAndSpeeds(dt) {
-				console.log("updateVehiclePositionsAndSpeeds with dt: ", dt);
-				for (var i = 0; i < lanes; i++) {
-					this.roadLanes[i].updateVehiclePositionsAndSpeeds(dt);
+				for (var i = 0; i < this.numberOfLanes; i++) {
+					this.roadLanes[i].updateSpeedAndPosition(dt);
 				}
 			},
 			writable: true,
 			configurable: true
 		},
 		checkForInconsistencies: {
-			value: function checkForInconsistencies(dt) {
-				console.log("checkForInconsistencies with dt: ", dt);
-				// TODO implement check for negative vehicle distances
-			},
+			value: function checkForInconsistencies(dt) {},
 			writable: true,
 			configurable: true
 		},
 		updateOutflow: {
 			value: function updateOutflow(dt) {
-				console.log("updateOutflow with dt: ", dt);
-				for (var i = 0; i < lanes; i++) {
+				for (var i = 0; i < this.numberOfLanes; i++) {
 					this.roadLanes[i].updateOutflow(dt);
 				}
 			},
@@ -579,8 +612,7 @@ var RoadSegment = (function () {
 		},
 		updateInflow: {
 			value: function updateInflow(dt) {
-				console.log("updateInflow with dt: ", dt);
-				for (var i = 0; i < lanes; i++) {
+				for (var i = 0; i < this.numberOfLanes; i++) {
 					this.roadLanes[i].updateInflow(dt);
 				}
 			},
@@ -609,18 +641,20 @@ var RoadSegment = (function () {
 })();
 
 module.exports = RoadSegment;
-
-
-
-
-
+// TODO implement check for negative vehicle distances
 
 },{"./idm":"/Users/ralphgerm/js/movsim-es6/src/js/idm.js","./roadLane":"/Users/ralphgerm/js/movsim-es6/src/js/roadLane.js","./vehicle":"/Users/ralphgerm/js/movsim-es6/src/js/vehicle.js"}],"/Users/ralphgerm/js/movsim-es6/src/js/vehicle.js":[function(require,module,exports){
 "use strict";
 
+var _interopRequire = function (obj) { return obj && obj.__esModule ? obj["default"] : obj; };
+
 var _prototypeProperties = function (child, staticProps, instanceProps) { if (staticProps) Object.defineProperties(child, staticProps); if (instanceProps) Object.defineProperties(child.prototype, instanceProps); };
 
 var _classCallCheck = function (instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } };
+
+var IdmParameters = _interopRequire(require("./idm"));
+
+var Models = _interopRequire(require("./models"));
 
 var numberOfCreatedVehicles = 0;
 
@@ -628,8 +662,20 @@ var Vehicle = (function () {
 	function Vehicle(vehicleParameters) {
 		_classCallCheck(this, Vehicle);
 
-		this.vehicleParameters = vehicleParameters;
-		console.log("contructed vehicle with: ", vehicleParameters);
+		this.vehicleParameters = vehicleParameters || getDefaultParameters();
+
+		// public variables
+		this.id = ++numberOfCreatedVehicles;
+		this.isTruck = vehicleParameters.isTruck;
+		this.length = vehicleParameters.length;
+		this.width = vehicleParameters.width;
+		this.position = vehicleParameters.position;
+		this.speed = vehicleParameters.speed;
+		this.acc = vehicleParameters.acc;
+		this.carFollowingModelParameters = vehicleParameters.isTruck ? IdmParameters.getDefaultTruck() : IdmParameters.getDefaultCar();
+		this.vLimit = this.carFollowingModelParameters.v0; // if effective speed limits, vLimit<v0
+		this.vMax = this.carFollowingModelParameters.v0; // if vehicle restricts speed, vMax<vLimit, v0
+		console.log("contructed vehicle with: ", this.vehicleParameters, this.carFollowingModelParameters);
 	}
 
 	_prototypeProperties(Vehicle, {
@@ -648,6 +694,58 @@ var Vehicle = (function () {
 			writable: true,
 			configurable: true
 		}
+	}, {
+		getRearPosition: {
+			value: function getRearPosition() {
+				return this.position - 0.5 * this.length;
+			},
+			writable: true,
+			configurable: true
+		},
+		getFrontPosition: {
+			value: function getFrontPosition() {
+				return this.position + 0.5 * this.length;
+			},
+			writable: true,
+			configurable: true
+		},
+		updateAcceleration: {
+			value: function updateAcceleration(roadLane) {
+				//        var leaderMoveable = roadLane.getFrontVehicle(this.position);
+
+				var leaderMoveable = roadLane.getLeader(this);
+
+				// TODO if no leader get a pre-defined Moveable set to infinity
+				//if(leaderMoveable === null){
+				//    leaderMoveable = Moveable.getMoveableAtInfinity();
+				// }
+				var leaderPosition = leaderMoveable ? leaderMoveable.position : 1000000;
+				var leaderSpeed = leaderMoveable ? leaderMoveable.speed : 100;
+				var leaderLength = leaderMoveable ? leaderMoveable.length : 0;
+				var distance = leaderPosition - leaderLength - this.position;
+				if (distance < 0) {
+					distance = 40; // TODO just a hack here
+					//throw new Error('negative distance');
+				}
+
+				var effectiveDesiredSpeed = Math.min(this.carFollowingModelParameters.v0, this.vLimit, this.vMax);
+				this.acc = Models.calculateAcceleration(distance, this.speed, leaderSpeed, effectiveDesiredSpeed, this.carFollowingModelParameters);
+			},
+			writable: true,
+			configurable: true
+		},
+		updateSpeedAndPosition: {
+			value: function updateSpeedAndPosition(dt) {
+				this.position += this.speed * dt + 0.5 * this.acc * dt * dt;
+				this.speed += this.acc * dt;
+				if (this.speed < 0) {
+					this.speed = 0;
+				}
+				//        console.log('vehicle ', this.id, '   position: ', this.position, '   speed: ', this.speed, '    acc: ', this.acc);
+			},
+			writable: true,
+			configurable: true
+		}
 	});
 
 	return Vehicle;
@@ -655,7 +753,7 @@ var Vehicle = (function () {
 
 module.exports = Vehicle;
 
-},{}]},{},["./src/js/main.js"])
+},{"./idm":"/Users/ralphgerm/js/movsim-es6/src/js/idm.js","./models":"/Users/ralphgerm/js/movsim-es6/src/js/models.js"}]},{},["./src/js/main.js"])
 
 
 //# sourceMappingURL=bundle.js.map

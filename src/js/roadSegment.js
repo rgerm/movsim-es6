@@ -5,54 +5,49 @@ import IdmParameters from './idm';
 export default class RoadSegment {
 
 	constructor(options) {
+		this.parameters = options;
 		this.roadLanes = [];
+		this.numberOfLanes = options.numberOfLanes;
 
-		for (let i = 1; i <= options.numberOfLanes; i++) {
+		for (let i = 1; i <= this.numberOfLanes; i++) {
 			let roadLane = new RoadLane(this);
 			this.roadLanes.push(roadLane);
 		}
 
 		var vehiclesInOneLane = options.roadLength * options.initDensityPerLane;
-		var numberOfVehicles = Math.floor(options.numberOfLanes * vehiclesInOneLane);
+		var numberOfVehicles = Math.floor(this.numberOfLanes * vehiclesInOneLane);
 		this._initializeVehicles(numberOfVehicles, options.initTruckFraction);
 
 		console.log('constructor RoadSegment');
 		debugger;
 	}
 
-	considerLaneChanges(dt) {
-		console.log('no lane changes');
-	}
+	considerLaneChanges(dt) {}
 
 	updateVehicleAccelerations(dt) {
-		console.log('updateVehicleAccelerations with dt: ', dt);
-		for (let i = 0; i < lanes; i++) {
+		for (let i = 0; i < this.numberOfLanes; i++) {
 			this.roadLanes[i].updateVehicleAccelerations(dt);
 		}
 	}
 
 	updateVehiclePositionsAndSpeeds(dt) {
-		console.log('updateVehiclePositionsAndSpeeds with dt: ', dt);
-		for (let i = 0; i < lanes; i++) {
-			this.roadLanes[i].updateVehiclePositionsAndSpeeds(dt);
+		for (let i = 0; i < this.numberOfLanes; i++) {
+			this.roadLanes[i].updateSpeedAndPosition(dt);
 		}
 	}
 
 	checkForInconsistencies(dt) {
-		console.log('checkForInconsistencies with dt: ', dt);
 		// TODO implement check for negative vehicle distances
 	}
 
 	updateOutflow(dt) {
-		console.log('updateOutflow with dt: ', dt);
-		for (let i = 0; i < lanes; i++) {
+		for (let i = 0; i < this.numberOfLanes; i++) {
 			this.roadLanes[i].updateOutflow(dt);
 		}
 	}
 
 	updateInflow(dt) {
-		console.log('updateInflow with dt: ', dt);
-		for (let i = 0; i < lanes; i++) {
+		for (let i = 0; i < this.numberOfLanes; i++) {
 			this.roadLanes[i].updateInflow(dt);
 		}
 	}
