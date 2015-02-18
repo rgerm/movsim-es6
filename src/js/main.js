@@ -18,12 +18,10 @@ let running = false;
 let time;
 let timeWarp = 4;
 
-
 let roadLength = 1000;
 let numberOfLanes = 1;
 let roadNetwork = createRingRoad(roadLength, numberOfLanes);
 
-debugger;
 start();
 
 function start() {

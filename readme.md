@@ -30,7 +30,7 @@ gulp server
 one time build
 -------------
 ```shell
-gulp 6to5
+gulp build
 ```
 
 
