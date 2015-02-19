@@ -19,7 +19,6 @@ export default class RoadSegment {
 		this._initializeVehicles(numberOfVehicles, options.initTruckFraction);
 
 		console.log('constructor RoadSegment');
-		debugger;
 	}
 
 	considerLaneChanges(dt) {}
