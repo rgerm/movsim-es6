@@ -18,59 +18,61 @@ var destinationFolder = './js';
 var destinationFile = 'bundle.js'
 
 gulp.task('build', function() {
-  browserifyShare(false);
+	browserifyShare(false);
 });
 
 gulp.task('watch', function() {
-  browserifyShare(true);
+	browserifyShare(true);
 });
 
 function browserifyShare(watchMode) {
-  var bundler = browserify({
-    cache: {},
-    packageCache: {},
-    fullPaths: true,
-    debug: true
-  });
+	var bundler = browserify({
+		cache: {},
+		packageCache: {},
+		fullPaths: true,
+		debug: true
+	});
 
-  if (watchMode) {
-    bundler = watchify(bundler);
-    bundler.on('update', function(filePath) {
-      gutil.log('File changed:', gutil.colors.green(filePath));
-      var startTime = process.hrtime();
-      newBundle(bundler, watchMode);
-      var taskTime = process.hrtime(startTime);
-      var prettyTime = prettyHrtime(taskTime);
-      gutil.log('Bundled', gutil.colors
-        .green(filePath), 'in', gutil.colors.magenta(
-          prettyTime));
-    });
-  }
+	if (watchMode) {
+		bundler = watchify(bundler);
+		bundler.on('update', function(filePath) {
+			gutil.log('File changed:', gutil.colors.green(filePath));
+			var startTime = process.hrtime();
+			newBundle(bundler, watchMode);
+			var taskTime = process.hrtime(startTime);
+			var prettyTime = prettyHrtime(taskTime);
+			gutil.log('Bundled', gutil.colors
+				.green(filePath), 'in', gutil.colors.magenta(
+					prettyTime));
+		});
+	}
 
-  bundler.add(sourceFile);
+	bundler.add(sourceFile);
 
-  newBundle(bundler, watchMode);
+	newBundle(bundler, watchMode);
 }
 
 function newBundle(bundler, watchMode) {
-  bundler.transform(babelify)
-    .bundle()
-    .on('error', gutil.log.bind(gutil, 'Browserify Error'))
-    .pipe(source(destinationFile))
-    .pipe(buffer())
-    // .pipe(sourcemaps.init({
-    //   loadMaps: true
-    // }))
-    // .pipe(uglify({ mangle: false }))
-    // .pipe(sourcemaps.write('./'))
-    .pipe(gulp.dest(destinationFolder));
-  // .pipe(gulpif(watchMode, livereload({
-  //   start: true
-  // })));
+	bundler.transform(babelify)
+		.bundle()
+		.on('error', gutil.log.bind(gutil, 'Browserify Error'))
+		.pipe(source(destinationFile))
+		.pipe(buffer())
+		// .pipe(sourcemaps.init({
+		//   loadMaps: true
+		// }))
+		// .pipe(uglify({ mangle: false }))
+		// .pipe(sourcemaps.write('./'))
+		.pipe(gulp.dest(destinationFolder));
+	// .pipe(gulpif(watchMode, livereload({
+	//   start: true
+	// })));
 }
 
 gulp.task('server', function() {
-  connect.server();
+	connect.server({
+		port: 8082
+	});
 });
 
 

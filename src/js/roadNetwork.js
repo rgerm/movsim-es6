@@ -1,40 +1,40 @@
 export default class RoadNetwork {
 
-	constructor() {
-		this.roadSegments = [];
-		console.log('contructor RoadNetwork')
-	}
+  constructor() {
+    this.roadSegments = [];
+    console.log('contructor RoadNetwork')
+  }
 
-	addRoadSegment(roadSegment) {
-		this.roadSegments.push(roadSegment);
-		console.log('  added ', roadSegment, ' to roadNetwork', this.roadSegments);
-	}
+  addRoadSegment(roadSegment) {
+    this.roadSegments.push(roadSegment);
+    console.log('  added ', roadSegment, ' to roadNetwork', this.roadSegments);
+  }
 
-	timeStep(dt) {
-		this.roadSegments.forEach(function(roadSegmet) {
-			roadSegmet.considerLaneChanges(dt);
-		});
+  timeStep(dt) {
+    for (let roadSegment of this.roadSegments) {
+      roadSegment.considerLaneChanges(dt);
+    }
 
-		this.roadSegments.forEach(function(roadSegmet) {
-			roadSegmet.updateVehicleAccelerations(dt);
-		});
+    for (let roadSegment of this.roadSegments) {
+      roadSegment.updateVehicleAccelerations(dt);
+    }
 
-		this.roadSegments.forEach(function(roadSegmet) {
-			roadSegmet.updateVehiclePositionsAndSpeeds(dt);
-		});
+    for (let roadSegment of this.roadSegments) {
+      roadSegment.updateVehiclePositionsAndSpeeds(dt);
+    }
 
-		// for debugging
-		this.roadSegments.forEach(function(roadSegmet) {
-			roadSegmet.checkForInconsistencies(dt);
-		});
+    for (let roadSegment of this.roadSegments) {
+      roadSegment.checkForInconsistencies(dt);
+    }
 
-		this.roadSegments.forEach(function(roadSegmet) {
-			roadSegmet.updateOutflow(dt);
-		});
+    for (let roadSegment of this.roadSegments) {
+      roadSegment.updateOutflow(dt);
+    }
 
-		this.roadSegments.forEach(function(roadSegmet) {
-			roadSegmet.updateInflow(dt);
-		});
-	}
+    for (let roadSegment of this.roadSegments) {
+      roadSegment.updateInflow(dt);
+    }
+
+  }
 
 }
