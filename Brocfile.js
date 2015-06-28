@@ -1,7 +1,7 @@
-var browserify = require('broccoli-browserify');
 var merge = require('broccoli-merge-trees');
 var esTranspiler = require('broccoli-babel-transpiler');
 var funnel = require('broccoli-funnel');
+var fastBrowserify = require('broccoli-fast-browserify');
 
 var htmlFiles = funnel('src', {
 	files: ['index.html']
@@ -20,9 +20,12 @@ var libsFiles = funnel('src/libs', {
 });
 
 var scriptTree = esTranspiler('src', {});
-var jsFile = browserify(scriptTree, {
-	entries: ['./js/main.js'],
-	outputFile: 'application.js'
+var jsFiles = fastBrowserify(scriptTree, {
+	bundles: {
+		'application.js': {
+			entryPoints: ['./js/main.js']
+		}
+	}
 });
 
-module.exports = merge([htmlFiles, cssFiles, resFiles, libsFiles, jsFile]);
+module.exports = merge([htmlFiles, cssFiles, resFiles, libsFiles, jsFiles]);

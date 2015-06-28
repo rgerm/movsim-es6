@@ -15,10 +15,9 @@
   "devDependencies": {
     "broccoli": "^0.16.3",
     "broccoli-babel-transpiler": "^5.2.3",
-    "broccoli-browserify": "^0.1.0",
+    "broccoli-fast-browserify": "^0.2.7",
     "broccoli-funnel": "^0.2.3",
     "broccoli-merge-trees": "^0.2.1",
-    "broccoli-static-compiler": "^0.2.1",
     "browserify": "^10.2.4"
   }
 }
