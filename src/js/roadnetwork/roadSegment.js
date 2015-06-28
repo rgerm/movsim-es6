@@ -1,6 +1,6 @@
 import RoadLane from './roadLane';
-import Vehicle from './vehicle';
-import IdmParameters from './idm';
+import Vehicle from './../moveable/vehicle';
+import IdmParameters from './../moveable/idm';
 
 export default class RoadSegment {
 

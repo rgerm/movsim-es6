@@ -1,15 +1,15 @@
 import {
 	createRingRoad
 }
-from './roadNetworkFactory';
-import RoadNetwork from './roadNetwork';
-import RoadSegment from './roadSegment';
-import raf from './raf';
-import Renderer from './renderer';
+from './roadnetwork/roadNetworkFactory';
+import RoadNetwork from './roadnetwork/roadNetwork';
+import RoadSegment from './roadnetwork/roadSegment';
+import raf from './view/raf';
+import Renderer from './view/renderer';
 import {
 	loadResources
 }
-from './resources';
+from './view/resources';
 
 
 // polyfill requestAnimationFrame
