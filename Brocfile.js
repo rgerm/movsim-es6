@@ -15,10 +15,14 @@ var resFiles = funnel('src/img', {
 	destDir: 'img'
 });
 
+var libsFiles = funnel('src/libs', {
+	destDir: 'libs'
+});
+
 var scriptTree = esTranspiler('src', {});
 var jsFile = browserify(scriptTree, {
 	entries: ['./js/main.js'],
 	outputFile: 'application.js'
 });
 
-module.exports = merge([htmlFiles, cssFiles, resFiles, jsFile]);
+module.exports = merge([htmlFiles, cssFiles, resFiles, libsFiles, jsFile]);
