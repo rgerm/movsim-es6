@@ -4,28 +4,28 @@ var funnel = require('broccoli-funnel');
 var fastBrowserify = require('broccoli-fast-browserify');
 
 var htmlFiles = funnel('src', {
-	files: ['index.html']
+  files: ['index.html']
 });
 
 var cssFiles = funnel('src/css', {
-	destDir: 'css'
+  destDir: 'css'
 });
 
 var resFiles = funnel('src/img', {
-	destDir: 'img'
+  destDir: 'img'
 });
 
 var libsFiles = funnel('src/libs', {
-	destDir: 'libs'
+  destDir: 'libs'
 });
 
 var scriptTree = esTranspiler('src', {});
 var jsFiles = fastBrowserify(scriptTree, {
-	bundles: {
-		'application.js': {
-			entryPoints: ['./js/main.js']
-		}
-	}
+  bundles: {
+    'application.js': {
+      entryPoints: ['./js/main.js']
+    }
+  }
 });
 
 module.exports = merge([htmlFiles, cssFiles, resFiles, libsFiles, jsFiles]);
