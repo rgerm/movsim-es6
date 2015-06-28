@@ -5,8 +5,8 @@ Node and npm
 ------------
 
 Installation:
-https://gist.github.com/isaacs/579814
-
+precompiled [nodejs.org](https://nodejs.org/)
+sources and [compile instructions](https://github.com/joyent/node)
 
 
 Build
@@ -15,27 +15,31 @@ Build
 Install dependencies
 --------------------
 ```shell
+npm install -g broccoli-cli
 npm install
 ```
 
 start webserver
 ---------------
 ```shell
-gulp server
+broccoli serve
 ```
 
--> localhost:8080
-
+-> localhost:4200
+broccoli watches for file changes and triggers rebuild
 
 one time build
 -------------
 ```shell
-gulp build
+./run.sh
+
+# or run
+broccoli build dist
 ```
 
 
 watch files for changes -> trigger build
 ----------------------------------------
 ```shell
-gulp watch
+broccoli serve
 ```
